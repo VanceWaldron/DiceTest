@@ -10,8 +10,8 @@
       padding: 0;
       overflow: hidden;
       background: #000;
-      height: 100%;
       width: 100%;
+      height: 100%;
     }
     #dice-container {
       width: 100vw;
@@ -36,67 +36,65 @@
   <button id="rollBtn">Roll D20</button>
   <div id="dice-container"></div>
 
-  <script type="module">
-    import { ThreeDDice, ThreeDDiceAPI } from "https://cdn.dddice.com/sdk/v1.0.0/dddice.js";
+  <!-- DDDice classic embed script -->
+  <script src="https://cdn.dddice.com/dddice.min.js"></script>
 
+  <script>
     let dice;
     let diceReady = false;
 
-   async function initDice() {
-      try {
-        const container = document.getElementById("dice-container");
+    function initDice() {
+      const container = document.getElementById("dice-container");
 
-        // Set explicit width/height in pixels
-        container.style.width = window.innerWidth + "px";
-        container.style.height = window.innerHeight + "px";
+      // Create API instance with your key
+      const api = new ThreeDDiceAPI({
+        apiKey: "gDaxorrfRitBH5xZg9Zusd4d2rfpEfXudILuJxMa3270600d" // replace with your real API key
+      });
 
-        const api = new ThreeDDiceAPI({
-          apiKey: "gDaxorrfRitBH5xZg9Zusd4d2rfpEfXudILuJxMa3270600d"
-        });
+      // Create the dice instance, attaching the API
+      dice = new ThreeDDice(container, {
+        api: api,
+        theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4", // your custom dice theme
+        showUI: false
+      });
 
-        dice = new ThreeDDice(container, {
-          theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4",
-          showUI: false
-        });
-
-        await dice.initialize();
+      // Initialize dice
+      dice.initialize().then(() => {
         diceReady = true;
-        console.log("Custom DDDICE theme loaded.");
-      } catch (error) {
-        console.error("Error initializing dice:", error);
-      }
+        console.log("Custom DDDICE theme loaded and ready!");
+      }).catch((err) => {
+        console.error("Error initializing dice:", err);
+      });
     }
 
-    // Make sure the container resizes if the window changes
-    window.addEventListener("resize", () => {
-      const container = document.getElementById("dice-container");
-      container.style.width = window.innerWidth + "px";
-      container.style.height = window.innerHeight + "px";
-    });
-    
-    document.getElementById("rollBtn").addEventListener("click", async () => {
+    document.getElementById("rollBtn").addEventListener("click", () => {
       if (!diceReady) {
         console.log("Dice not ready yet, please wait...");
         return;
       }
 
-      try {
-        const result = await dice.roll([
-          {
-            type: "d20",
-            theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4"
-          }
-        ]);
-
-        console.log("Rolled D20 result:", result[0].value);
-        alert("You rolled: " + result[0].value);
-      } catch (error) {
-        console.error("Error rolling dice:", error);
-      }
+      // Roll a D20
+      dice.roll([
+        {
+          type: "d20",
+          theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4"
+        }
+      ]).then((results) => {
+        console.log("D20 roll result:", results[0].value);
+        alert("You rolled: " + results[0].value);
+      }).catch((err) => {
+        console.error("Error rolling dice:", err);
+      });
     });
 
     initDice();
-  </script>
 
+    // Resize container on window resize
+    window.addEventListener("resize", () => {
+      const container = document.getElementById("dice-container");
+      container.style.width = window.innerWidth + "px";
+      container.style.height = window.innerHeight + "px";
+    });
+  </script>
 </body>
 </html>
