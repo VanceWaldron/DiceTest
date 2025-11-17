@@ -42,9 +42,13 @@
     let dice;
     let diceReady = false;
 
-    async function initDice() {
+   async function initDice() {
       try {
         const container = document.getElementById("dice-container");
+
+        // Set explicit width/height in pixels
+        container.style.width = window.innerWidth + "px";
+        container.style.height = window.innerHeight + "px";
 
         const api = new ThreeDDiceAPI({
           apiKey: "gDaxorrfRitBH5xZg9Zusd4d2rfpEfXudILuJxMa3270600d"
@@ -63,6 +67,13 @@
       }
     }
 
+    // Make sure the container resizes if the window changes
+    window.addEventListener("resize", () => {
+      const container = document.getElementById("dice-container");
+      container.style.width = window.innerWidth + "px";
+      container.style.height = window.innerHeight + "px";
+    });
+    
     document.getElementById("rollBtn").addEventListener("click", async () => {
       if (!diceReady) {
         console.log("Dice not ready yet, please wait...");
