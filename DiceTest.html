@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>DDDICE Public D20 Test</title>
-
   <style>
     html, body {
       margin: 0;
@@ -37,55 +36,55 @@
   <button id="rollBtn">Roll D20</button>
   <div id="dice-container"></div>
 
-  <!-- DDDice classic embed script (public/default themes only) -->
-  <script src="https://cdn.dddice.com/dddice.min.js"></script>
+  <!-- Self-hosted DDDice SDK -->
+  <script src="./js/dddice.min.js"></script>
 
   <script>
-    let dice;
-    let diceReady = false;
-
-    function initDice() {
+    // Ensure everything runs after page and SDK load
+    window.onload = function() {
+      let dice;
+      let diceReady = false;
       const container = document.getElementById("dice-container");
 
-      // Create a dice instance (no API key needed for public theme)
+      // Create a public theme D20 dice
       dice = new ThreeDDice(container, {
         theme: "standard", // public/default dice theme
         showUI: false
       });
 
-      dice.initialize().then(() => {
-        diceReady = true;
-        console.log("DDDICE public theme loaded and ready!");
-      }).catch(err => {
-        console.error("Error initializing dice:", err);
-      });
-    }
-
-    document.getElementById("rollBtn").addEventListener("click", () => {
-      if (!diceReady) {
-        console.log("Dice not ready yet, please wait...");
-        return;
-      }
-
-      // Roll a D20
-      dice.roll([{ type: "d20", theme: "standard" }])
-        .then(results => {
-          console.log("D20 roll result:", results[0].value);
-          alert("You rolled: " + results[0].value);
+      // Initialize dice
+      dice.initialize()
+        .then(() => {
+          diceReady = true;
+          console.log("DDDICE public theme loaded and ready!");
         })
         .catch(err => {
-          console.error("Error rolling dice:", err);
+          console.error("Error initializing dice:", err);
         });
-    });
 
-    initDice();
+      // Roll button
+      document.getElementById("rollBtn").addEventListener("click", () => {
+        if (!diceReady) {
+          console.log("Dice not ready yet, please wait...");
+          return;
+        }
 
-    // Resize container on window resize
-    window.addEventListener("resize", () => {
-      const container = document.getElementById("dice-container");
-      container.style.width = window.innerWidth + "px";
-      container.style.height = window.innerHeight + "px";
-    });
+        dice.roll([{ type: "d20", theme: "standard" }])
+          .then(results => {
+            console.log("D20 roll result:", results[0].value);
+            alert("You rolled: " + results[0].value);
+          })
+          .catch(err => {
+            console.error("Error rolling dice:", err);
+          });
+      });
+
+      // Resize container on window resize
+      window.addEventListener("resize", () => {
+        container.style.width = window.innerWidth + "px";
+        container.style.height = window.innerHeight + "px";
+      });
+    };
   </script>
 </body>
 </html>
