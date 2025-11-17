@@ -10,6 +10,8 @@
       padding: 0;
       overflow: hidden;
       background: #000;
+      height: 100%;
+      width: 100%;
     }
     #dice-container {
       width: 100vw;
@@ -38,37 +40,48 @@
     import { ThreeDDice, ThreeDDiceAPI } from "https://cdn.dddice.com/sdk/v1.0.0/dddice.js";
 
     let dice;
+    let diceReady = false;
 
     async function initDice() {
-      const container = document.getElementById("dice-container");
+      try {
+        const container = document.getElementById("dice-container");
 
-      const api = new ThreeDDiceAPI({
-        apiKey: "gDaxorrfRitBH5xZg9Zusd4d2rfpEfXudILuJxMa3270600d"
-      });
+        const api = new ThreeDDiceAPI({
+          apiKey: "gDaxorrfRitBH5xZg9Zusd4d2rfpEfXudILuJxMa3270600d"
+        });
 
-      dice = new ThreeDDice(container, {
-        theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4", // ← your custom dice
-        showUI: false
-      });
+        dice = new ThreeDDice(container, {
+          theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4",
+          showUI: false
+        });
 
-      await dice.initialize();
-      console.log("Custom DDDICE theme loaded.");
+        await dice.initialize();
+        diceReady = true;
+        console.log("Custom DDDICE theme loaded.");
+      } catch (error) {
+        console.error("Error initializing dice:", error);
+      }
     }
 
-    document.getElementById("rollBtn").addEventListener("click", () => {
-      if (!dice) {
-        console.log("Dice not ready yet...");
+    document.getElementById("rollBtn").addEventListener("click", async () => {
+      if (!diceReady) {
+        console.log("Dice not ready yet, please wait...");
         return;
       }
 
-      dice.roll([
-        {
-          type: "d20",
-          theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4" // ensure roll uses your theme
-        }
-      ]);
+      try {
+        const result = await dice.roll([
+          {
+            type: "d20",
+            theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4"
+          }
+        ]);
 
-      console.log("Rolling custom D20...");
+        console.log("Rolled D20 result:", result[0].value);
+        alert("You rolled: " + result[0].value);
+      } catch (error) {
+        console.error("Error rolling dice:", error);
+      }
     });
 
     initDice();
