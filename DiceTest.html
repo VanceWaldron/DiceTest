@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>DDDICE Custom Theme Test</title>
+  <title>DDDICE Public D20 Test</title>
 
   <style>
     html, body {
@@ -13,17 +13,19 @@
       width: 100%;
       height: 100%;
     }
+
     #dice-container {
       width: 100vw;
       height: 100vh;
     }
+
     #rollBtn {
       position: absolute;
       z-index: 10;
       top: 20px;
       left: 20px;
       padding: 10px 16px;
-      background: #aaa;
+      background: #fff;
       color: #000;
       font-size: 16px;
       border: none;
@@ -31,12 +33,11 @@
     }
   </style>
 </head>
-
 <body>
   <button id="rollBtn">Roll D20</button>
   <div id="dice-container"></div>
 
-  <!-- DDDice classic embed script -->
+  <!-- DDDice classic embed script (public/default themes only) -->
   <script src="https://cdn.dddice.com/dddice.min.js"></script>
 
   <script>
@@ -46,23 +47,16 @@
     function initDice() {
       const container = document.getElementById("dice-container");
 
-      // Create API instance with your key
-      const api = new ThreeDDiceAPI({
-        apiKey: "gDaxorrfRitBH5xZg9Zusd4d2rfpEfXudILuJxMa3270600d" // replace with your real API key
-      });
-
-      // Create the dice instance, attaching the API
+      // Create a dice instance (no API key needed for public theme)
       dice = new ThreeDDice(container, {
-        api: api,
-        theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4", // your custom dice theme
+        theme: "standard", // public/default dice theme
         showUI: false
       });
 
-      // Initialize dice
       dice.initialize().then(() => {
         diceReady = true;
-        console.log("Custom DDDICE theme loaded and ready!");
-      }).catch((err) => {
+        console.log("DDDICE public theme loaded and ready!");
+      }).catch(err => {
         console.error("Error initializing dice:", err);
       });
     }
@@ -74,17 +68,14 @@
       }
 
       // Roll a D20
-      dice.roll([
-        {
-          type: "d20",
-          theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4"
-        }
-      ]).then((results) => {
-        console.log("D20 roll result:", results[0].value);
-        alert("You rolled: " + results[0].value);
-      }).catch((err) => {
-        console.error("Error rolling dice:", err);
-      });
+      dice.roll([{ type: "d20", theme: "standard" }])
+        .then(results => {
+          console.log("D20 roll result:", results[0].value);
+          alert("You rolled: " + results[0].value);
+        })
+        .catch(err => {
+          console.error("Error rolling dice:", err);
+        });
     });
 
     initDice();
