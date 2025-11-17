@@ -1,83 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DDDICE Roller</title>
-<style>
-  body {
-    margin: 0;
-    overflow: hidden;
-    background: #000;
-  }
-  #dice-container {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-  }
-  #rollButton {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 12px 24px;
-    background: white;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    z-index: 10;
-  }
-  canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>DDDICE Custom Theme Test</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+    }
+    #dice-container {
+      width: 100vw;
+      height: 100vh;
+    }
+    #rollBtn {
+      position: absolute;
+      z-index: 10;
+      top: 20px;
+      left: 20px;
+      padding: 10px 16px;
+      background: #fff;
+      color: #000;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
-<div id="dice-container">
-  <button id="rollButton">Roll D20</button>
-  <canvas id="diceCanvas"></canvas>
-</div>
+  <button id="rollBtn">Roll D20</button>
+  <div id="dice-container"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@dddice/engine@2.0.0-alpha.26/dist/dddice.min.js"></script>
+  <script type="module">
+    import { ThreeDDice, ThreeDDiceAPI } from "https://cdn.dddice.com/sdk/v1.0.0/dddice.js";
 
-<script>
-  const API_KEY = "gDaxorrfRitBH5xZg9Zusd4d2rfpEfXudILuJxMa3270600d";
-  const canvas = document.getElementById("diceCanvas");
+    let dice;
 
-  let dice;
+    async function initDice() {
+      const container = document.getElementById("dice-container");
 
-  function initDice() {
-    dice = new dddice.ThreeDDice(canvas, API_KEY, {
-      width: window.innerWidth,
-      height: window.innerHeight,
-      controlsEnabled: false
+      const api = new ThreeDDiceAPI({
+        apiKey: "gDaxorrfRitBH5xZg9Zusd4d2rfpEfXudILuJxMa3270600d"
+      });
+
+      dice = new ThreeDDice(container, {
+        theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4", // ← your custom dice
+        showUI: false
+      });
+
+      await dice.initialize();
+      console.log("Custom DDDICE theme loaded.");
+    }
+
+    document.getElementById("rollBtn").addEventListener("click", () => {
+      if (!dice) {
+        console.log("Dice not ready yet...");
+        return;
+      }
+
+      dice.roll([
+        {
+          type: "d20",
+          theme: "67311ef7-c3dc-11f0-a53a-5e4785df0bb4" // ensure roll uses your theme
+        }
+      ]);
+
+      console.log("Rolling custom D20...");
     });
 
-    dice.start();
-  }
+    initDice();
+  </script>
 
-  document.getElementById("rollButton").onclick = async () => {
-    if (!dice) return;
-
-    try {
-      const result = await dice.roll([{ type: "d20", count: 1 }]);
-      console.log("RESULT:", result);
-
-      // Optional: Send result back to Framer
-      if (parent) {
-        parent.postMessage({ type: "d20_result", value: result }, "*");
-      }
-    } catch (err) {
-      console.error("ROLL FAILED:", err);
-    }
-  };
-
-  initDice();
-</script>
 </body>
 </html>
